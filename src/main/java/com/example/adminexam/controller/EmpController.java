@@ -53,7 +53,6 @@ public class EmpController {
         return VIEW_PREFIX+"emp.html";
     }
     
-    //추가
     //사원 저장
     @PostMapping("/emp")
     @ResponseBody
