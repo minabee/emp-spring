@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.adminexam.mapper.EmpMapper">
+
+	<!-- 전체 사원 조회 -->
+    <select id="getEmpAll" resultType="map">
+        SELECT
+        	e.empno as empno,
+        	e.ename as ename,
+        	e.job as job,
+        	e.sal as sal,
+        	e.hiredate as hiredate,
+        	ifnull(d.dname, '') as dname,
+        	CAST(ifnull(e.comm, 0) AS UNSIGNED) as comm <!-- 정수로 변환 -->
+        FROM emp e
+        LEFT JOIN dept d
+        ON e.deptno = d.deptno
+        ORDER BY hiredate desc
+    </select>
+    
+    <!-- 사원 저장 -->
+	<insert id="setEmp" parameterType="map">
+		INSERT INTO emp
+			(
+				empno,
+				ename,
+				job,
+				sal,
+				hiredate,
+				comm,
+				deptno
+			)
+			VALUES
+			(
+				#{empno},
+				#{ename},
+				#{job},
+				#{sal},
+				#{hiredate},
+				COALESCE(NULLIF(#{comm}, ''), 0), <!-- COALESCE : Null이면 0으로 반환 -->
+				(SELECT deptno FROM dept WHERE dname = #{dname})
+			)
+	</insert>
+	
+	<!-- 사원번호로 조회 -->
+	<select id="getEmpById" parameterType="int" resultType="map">
+		SELECT
+        	e.empno as empno,
+        	e.ename as ename,
+        	e.job as job,
+        	e.sal as sal,
+        	e.hiredate as hiredate,
+        	ifnull(d.dname, '') as dname,
+        	CAST(ifnull(e.comm, 0) AS UNSIGNED) as comm <!-- 정수로 변환 -->
+        FROM 
+        	emp e
+        LEFT JOIN 
+        	dept d
+        ON 
+        	e.deptno = d.deptno
+		WHERE
+			e.empno = #{empno}
+	</select>
+	
+	<!-- 사원 업데이트 -->
+	<update id="updateEmp" parameterType="map">
+		UPDATE emp
+		SET
+			empno = #{empno},
+			ename = #{ename},
+			job = #{job},
+			sal = #{sal},
+			hiredate = #{hiredate},
+			comm = COALESCE(NULLIF(#{comm}, ''), 0),
+			deptno = (SELECT deptno FROM dept WHERE dname = #{dname})
+		WHERE 
+			empno = #{empno}
+	</update>
+	
+	<!-- 사원 삭제 -->
+	<delete id="delEmp" parameterType="int">
+		DELETE FROM emp
+		WHERE
+			empno = #{empno}
+	</delete>
+	
+	<!-- 사원이름으로 사원검색 -->
+	<select id="searchEmpByName" parameterType="String" resultType="map">
+		SELECT 
+			e.empno as empno,
+			e.ename as ename,
+			e.job as job,
+			e.sal as sal,
+			e.hiredate as hiredate,
+			ifnull(d.dname, '') as dname,
+        	CAST(ifnull(e.comm, 0) AS UNSIGNED) as comm
+		FROM 
+			emp as e
+		JOIN
+			dept as d
+		ON 	
+			e.deptno = d.deptno
+		WHERE
+			e.ename like concat('%', #{e.ename}, '%')
+	</select>
+	
+	<!-- 통계 -->
+	<select id="getStats" resultType="map">
+		SELECT
+			count(empno) as empCnt,
+			(select avg(sal) from emp) as avgSal,
+			(select count(distinct deptno) from emp) as deptCnt,
+			(select COALESCE(SUM(comm), 0) from emp) as totalComm	
+		FROM
+			emp
+	</select>
+	
+	
+	
+</mapper>
