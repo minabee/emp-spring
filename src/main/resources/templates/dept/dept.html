@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org"> <!-- 타임리프 문법 변경 -->
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -26,7 +26,7 @@
                 </div>
                 <div class="btn-area">
                     <a href="#" class="btn-cancel">취소</a>
-                    <a href="#" class="btn-success">등록</a>
+                    <a href="#" class="btn-success" onclick="addDept()">등록</a>
                 </div>
             </div>
         </div>
@@ -50,8 +50,8 @@
                 </div>
                 <div class="btn-area">
                     <input id="boardIdHidden" type="hidden">
-                    <a id="contentUpdate" href="#" class="btn-update">수정</a>
-                    <a id="contentDelete" href="#" class="btn-delete">삭제</a>
+                    <a id="contentUpdate" href="#" class="btn-update" onclick="updateDept()">수정</a>
+                    <a id="contentDelete" href="#" class="btn-delete" onclick="delDept()">삭제</a>
                 </div>
             </div>
         </div>
@@ -64,13 +64,13 @@
                     </a>
                 </li>
                 <li>
-                    <a href="#">
+                    <a th:href="@{/emp}">
                         <span class="icon"><ion-icon name="home-outline"></ion-icon></span>
                         <span class="title">사원 목록</span>                
                     </a>
                 </li>
                 <li>
-                    <a href="#">
+                    <a th:href="@{/dept}">
                         <span class="icon"><ion-icon name="person-outline"></ion-icon></span>
                         <span class="title">부서 목록</span>                
                     </a>
@@ -109,16 +109,19 @@
                          </tr>
                      </thead>
                      <tbody id="deptData">
-                        <tr onclick="updateDept()">
-                            <td>10</td>
-                            <td>ACCOUNTING</td>
-                            <td>NEW YORK</td>
-                            <td>12</td>
+	                    <tr th:if="${size} == '0'">
+	                    	<td colspan=4>데이터가 없습니다.</td>
+	                    </tr>	
+                        <tr th:onclick="clickDept([[${dept.deptno}]])" th:unless="${size} == '0'" th:each="dept : ${deptList}">
+                            <td th:text="${dept.deptno}"></td>
+                            <td th:text="${dept.dname}"></td>
+                            <td th:text="${dept.loc}"></td>
+                            <td th:text="${dept.empcnt}"></td>
                          </tr>
                      </tbody>
                  </table>
                  <!-- 페이징 처리하는 HTML -->
-                 <div class="pagination">
+<!--                  <div class="pagination">
                     <a>Previous</a>
                     <a>1</a>
                     <a>2</a>  	
@@ -126,7 +129,7 @@
                     <a>4</a>
                     <a>5</a>
                     <a>Next</a>
-                 </div>
+                 </div> -->
              </div>
          </div>
     </div>

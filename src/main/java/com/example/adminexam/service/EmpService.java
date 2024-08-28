@@ -21,16 +21,18 @@ public class EmpService {
 	}
 
 	// 사원 저장
-	/**
-	 * ResponseEntity 검색하기
-	 * 
-	 * */
-	public Map<String, Object> setEmp(Map<String, Object> params) {
-		Map<String, Object> result = new HashMap<>();
-		int rows = empMapper.setEmp(params);
-		result.put("success", rows > 0);
-		
-		return result;
+	public String setEmp(Map<String, Object> params) {
+		try {
+			
+			int result = empMapper.setEmp(params);
+	        if (result > 0) {
+	            return "사원이 성공적으로 저장되었습니다.";
+	        } else {
+	            return "사원 저장 중 오류가 발생했습니다.";
+	        }
+		} catch(Exception e) {
+			return "사원 저장 중 오류가 발생했습니다.";
+		}
 	}
 	
 	//사원번호로 사원 조회
@@ -39,12 +41,17 @@ public class EmpService {
 	}
 	
 	//사원 업데이트
-	public Map<String, Object> updateEmp(Map<String, Object> params) {
-		Map<String, Object> result = new HashMap<>();
-        int rows = empMapper.updateEmp(params);
-
-        result.put("success", rows > 0);
-        return result;
+	public String updateEmp(Map<String, Object> params) {
+		try {
+			int result = empMapper.updateEmp(params);
+	        if (result > 0) {
+	            return "사원이 성공적으로 수정되었습니다.";
+	        } else {
+	            return "사원 수정 중 오류가 발생했습니다.";
+	        }
+		} catch(Exception e) {
+			return "사원 수정 중 오류가 발생했습니다.";
+		}
 	}
 	
 	//사원 삭제

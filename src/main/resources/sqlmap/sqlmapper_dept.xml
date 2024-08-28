@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.adminexam.mapper.DeptMapper">
+	
+	<!-- 전체 부서 조회 -->
+    <select id="getDeptAll" resultType="map">
+        SELECT
+        	d.deptno,
+        	d.dname,
+        	d.loc,
+        	count(e.empno) as empcnt
+        FROM
+        	dept d
+       	LEFT JOIN
+       		emp e
+      	ON 
+      		d.deptno = e.deptno
+     	GROUP BY
+     		d.deptno, d.dname, d.loc
+       	ORDER BY
+       		d.deptno desc
+    </select>
+    
+    <!-- 부서 저장 -->
+    <insert id="setDept" parameterType="map">
+    	INSERT INTO dept
+    		(
+    			deptno,
+    			dname,
+    			loc
+    		)
+    		VALUES
+    		(
+    			#{deptno},
+    			#{dname},
+    			#{loc}
+    		)
+    		
+    </insert>
+    
+    <!-- 부서번호로 부서조회 -->
+    <select id="getDeptById" parameterType="int" resultType="map">
+    	SELECT
+    		deptno,
+    		dname,
+    		loc
+   		FROM
+   			dept
+ 		WHERE
+ 			deptno = #{deptno}    		
+    </select>
+    
+    <!-- 부서 업데이트 -->
+    <update id="updateDept" parameterType="map">
+    	UPDATE dept
+    	SET
+    		deptno = #{deptno},
+    		dname = #{dname},
+    		loc = #{loc}
+    	WHERE
+    		deptno = #{deptno}	
+    </update>
+    
+    <!-- 부서 삭제 -->
+    <delete id="delDept" parameterType="int">
+    	DELETE FROM dept
+    	WHERE
+    		deptno = #{deptno}
+    </delete>
+    
+    <!-- 부서 이름으로 부서 검색 -->
+    <select id="searchDept" parameterType="String" resultType="map">
+    	SELECT
+    		deptno,
+    		dname,
+    		loc
+   		FROM
+   			dept
+  		WHERE
+  			dname like concat('%', #{dname}, '%')
+    </select>
+  
+   	
+</mapper>

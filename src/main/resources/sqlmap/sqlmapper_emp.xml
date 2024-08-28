@@ -38,7 +38,7 @@
 				#{sal},
 				#{hiredate},
 				COALESCE(NULLIF(#{comm}, ''), 0), <!-- COALESCE : Null이면 0으로 반환 -->
-				(SELECT deptno FROM dept WHERE dname = #{dname})
+				#{deptno}
 			)
 	</insert>
 	
@@ -51,6 +51,7 @@
         	e.sal as sal,
         	e.hiredate as hiredate,
         	ifnull(d.dname, '') as dname,
+        	ifnull(e.deptno, 0) as deptno,
         	CAST(ifnull(e.comm, 0) AS UNSIGNED) as comm <!-- 정수로 변환 -->
         FROM 
         	emp e
@@ -72,7 +73,7 @@
 			sal = #{sal},
 			hiredate = #{hiredate},
 			comm = COALESCE(NULLIF(#{comm}, ''), 0),
-			deptno = (SELECT deptno FROM dept WHERE dname = #{dname})
+			deptno = #{deptno}
 		WHERE 
 			empno = #{empno}
 	</update>

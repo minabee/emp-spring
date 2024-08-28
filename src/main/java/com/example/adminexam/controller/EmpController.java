@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.example.adminexam.dto.EmpDTO;
+import com.example.adminexam.service.DeptService;
 import com.example.adminexam.service.EmpService;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -37,6 +38,9 @@ public class EmpController {
     @Autowired
     private EmpService empService;
     
+    @Autowired
+    private DeptService deptService;
+    
     /** 사원페이지 조회(페이지 호출)
      * */
     @GetMapping("/emp")
@@ -45,10 +49,13 @@ public class EmpController {
     	
     	//전체 사원 목록 조회
     	List<Map<String,Object>> list = empService.getEmpAll(); //서비스에서 데이터 가져옴
-    	
     	//사원 목록을 모델에 추가
     	model.addAttribute("empList",list); //"emp/emp" 경로에 데이터 전달
     	model.addAttribute("size",list.size()); 
+    	
+    	//부서 목록 조회
+    	List<Map<String, Object>> deptList = deptService.getDeptAll();
+        model.addAttribute("deptList", deptList);
     	
         return VIEW_PREFIX+"emp.html";
     }
@@ -56,9 +63,16 @@ public class EmpController {
     //사원 저장
     @PostMapping("/emp")
     @ResponseBody
-    public Map<String, Object> callInsertEmp(@RequestBody Map<String, Object> params) {
+    public Map<String, Object> setEmp(@RequestBody Map<String, Object> params) {
     	logger.debug("[ Call /emp - POST ]");
-    	return empService.setEmp(params);
+    	
+    	//서비스 호출 및 메시지 반환
+    	String msg = empService.setEmp(params);
+    	
+    	Map<String, Object> response = new HashMap<>();
+	    response.put("msg", msg);
+    	
+    	return response;
     }
     
     //사원 업데이트
@@ -67,20 +81,29 @@ public class EmpController {
     public Map<String, Object> callEmpUpdateApi(@RequestBody Map<String, Object> params,  @PathVariable("empno") int empno) {
     	logger.debug("[ Call /emp - PATCH ]");
     	params.put("empno", empno);
-    	return empService.updateEmp(params);
+    	
+    	//서비스 호출 및 메시지 반환
+    	String msg = empService.updateEmp(params);
+    	
+    	Map<String, Object> response = new HashMap<>();
+	    response.put("msg", msg);
+    	
+    	return response;
     }
+    
     //해당 사원 조회
   	@GetMapping("/emp/{empno}")
   	@ResponseBody
-  	public Map<String, Object> getEmpById(@PathVariable("empno") int empno) { 
-  		logger.debug("[ Call /emp/{empno} - GET ]");
-  		return empService.getEmpById(empno);
-  	}
+	public Map<String, Object> getEmpById(@PathVariable("empno") int empno) { //@PathVariable: ID와 같이 단일 식별자나 중요한 리소스를 구분할 때 사용되며, 정확하고 짧은 값이 필요할 때 적합
+		return empService.getEmpById(empno);
+	}
+  	
+  	
   	//사원 삭제
   	@DeleteMapping("/emp/{empno}")
   	@ResponseBody
 	public String delEmp(@PathVariable("empno") int empno) {
-  		logger.debug("[ Call /emp/search - GET ]");
+  		logger.debug("[ Call /emp/ - DELETE ]");
 		return empService.delEmp(empno);
   	}
   	
@@ -88,17 +111,18 @@ public class EmpController {
   	@GetMapping("/emp/search")
   	@ResponseBody
   	public List<EmpDTO> searchEmpByName(@RequestParam String ename){ 
-  		logger.debug("[ Call /emp/search - GET ]");
   		return empService.searchEmpByName(ename);
   	}
   	
   	//통계
   	@GetMapping("/emp/stats") 
-  	public Map<String, Object> getStats(){
-  		logger.debug("[ Call /emp/stats - GET ]");
-  		Map<String, Object> stats = new HashMap<>();
-  		stats.put("empStatistics", empService.getStats());
-  		return stats;
+  	public String getStats(ModelMap model){
+  		Map<String, Object> stats = empService.getStats();
+  	    model.addAttribute("empCnt", stats.get("empCnt"));
+  	    model.addAttribute("avgSal", stats.get("avgSal"));
+  	    model.addAttribute("deptCnt", stats.get("deptCnt"));
+  	    model.addAttribute("totalComm", stats.get("totalComm"));
+  	    return "stats";
   	}
         
 }

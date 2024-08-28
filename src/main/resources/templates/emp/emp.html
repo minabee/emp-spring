@@ -11,8 +11,8 @@
     <div class="container">
         <!-- 사원 추가 팝업 -->
         <div class="write-popup">
-            <div class="editor">
-                <div class="input-box">
+           	<form class="editor" th:action="@{/setEmp}" th:method="post">
+           		<div class="input-box">
                     <label for="i_empno">사원 번호 : </label>
                     <input id="i_empno" type="number" placeholder="사원번호를 입력하세요." required>
                 </div>
@@ -34,7 +34,9 @@
                 </div>
                 <div class="input-box">
                     <label for="i_dname">부서 : </label>
-                    <select id="i_dname" required>
+                    <select id="i_dname" name="deptno" required>
+                    	<option value="">부서 선택</option>
+                    	<option th:each="dept : ${deptList}" th:value="${dept.deptno}" th:text="${dept.dname}"></option>
                     </select>
                 </div>
                 <div class="input-box">
@@ -45,11 +47,11 @@
                     <a href="#" class="btn-cancel">취소</a>
                     <a id="empSubmit" href="#" class="btn-success" onclick="addEmp()">등록</a>
                 </div>
-            </div>
+           	</form>
         </div>
         <!-- 사원 수정 -->
         <div class="update-popup">
-             <div class="editor">
+             <form class="editor" th:action="@{/updateEmp}" th:method="post">
                 <div class="close">
                     <a href="#" class="btn-close">닫기</a>
                 </div>
@@ -75,7 +77,10 @@
                 </div>
                 <div class="input-box">
                     <label for="u_dname">부서 : </label>
-                    <select id="u_dname" required>
+                    <select id="u_dname" name="deptno" required>
+                    	<option value="">부서 선택</option>
+                    	<option th:each="dept : ${deptList}" th:value="${dept.deptno}" th:text="${dept.dname}">
+                    	</option>
                     </select>
                 </div>
                 <div class="input-box">
@@ -87,7 +92,7 @@
                     <a id="contentUpdate" href="#" class="btn-update" onclick="updateEmp()">수정</a>
                     <a id="contentDelete" href="#" class="btn-delete" onclick="delEmp()">삭제</a>
                 </div>
-            </div>
+            </form>
         </div>
         <div class="navigation">
             <ul>
@@ -98,13 +103,13 @@
                     </a>
                 </li>
                 <li>
-                    <a href="#">
+                    <a th:href="@{/emp}">
                         <span class="icon"><ion-icon name="home-outline"></ion-icon></span>
                         <span class="title">사원 목록</span>                
                     </a>
                 </li>
                 <li>
-                    <a href="#">
+                    <a th:href="@{/dept}">
                         <span class="icon"><ion-icon name="person-outline"></ion-icon></span>
                         <span class="title">부서 목록</span>                
                     </a>
@@ -130,7 +135,7 @@
          <div class="cardBox">
              <div class="card">
                  <div>
-                    <div id="studentsCnt" class="numbers"></div>
+                    <div id="empCnt" class="numbers" th:text="${empCnt}"></div>
                     <div class="cardName">사원 수</div>
                  </div>
                  <div class="iconBx">
@@ -139,7 +144,7 @@
              </div>
              <div class="card">
                 <div>
-                   <div id="boardCnt" class="numbers"></div>
+                   <div id="avgSal" class="numbers" th:text="${avgSal}"></div>
                    <div class="cardName">사원 평균급여</div>
                 </div>
                 <div class="iconBx">
@@ -148,7 +153,7 @@
             </div>
             <div class="card">
                 <div>
-                   <div id="writerCnt" class="numbers"></div>
+                   <div id="deptCnt" class="numbers" th:text="${deptCnt}"></div>
                    <div class="cardName">부서 수</div>
                 </div>
                 <div class="iconBx">
@@ -157,7 +162,7 @@
             </div>
             <div class="card">
                 <div>
-                   <div id="viewsCnt" class="numbers"></div>
+                   <div id="totalComm" class="numbers" th:text="${totalComm}"></div>
                    <div class="cardName">사원 보너스 합</div>
                 </div>
                 <div class="iconBx">
@@ -170,7 +175,7 @@
              <div class="recentOrders">
                  <div class="cardHeader">
                      <h2>사원 목록</h2>
-                     <a href="#" class="btn" style="background-color: #19ce60;" onclick="downloadExcelFile()">엑셀 다운로드</a>
+                     <!-- <a href="#" class="btn" style="background-color: #19ce60;" onclick="downloadExcelFile()">엑셀 다운로드</a> -->
                      <a href="#" id="empAdd" class="btn">사원 추가</a>
                  </div>
                  <table>
@@ -182,6 +187,7 @@
                             <th>사원 급여</th>
                             <th>입사 날짜</th>
                             <th>부서 이름</th>
+                            <th>보너스</th>
                          </tr>
                      </thead>
                      <tbody id="empData">
@@ -196,6 +202,7 @@
                             <td th:text="${emp.sal}"></td>
                             <td th:text="${emp.hiredate}"></td>
                             <td th:text="${emp.dname}"></td>
+                            <td th:text="${emp.comm}"></td>
                         </tr>
                      </tbody>
                  </table>

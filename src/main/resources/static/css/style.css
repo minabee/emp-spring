@@ -309,7 +309,9 @@ body{
     font-size: 20px;
     font-weight: 600;
 }
-.input-box input{
+.input-box input,
+.input-box select,
+.input-box option{
     border: solid 2px #1E90FF;
     border-radius: 5px;
     padding: 1%;
