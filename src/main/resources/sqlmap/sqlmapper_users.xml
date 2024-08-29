@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.adminexam.mapper.UsersMapper">
+
+	<!-- 전체 사원 조회 -->
+    <select id="getUsers" resultType="com.example.adminexam.dto.UsersDTO">
+        SELECT
+        	userId,
+        	userPassword,
+        	userName
+        FROM
+        	tb_users
+        WHERE
+        	userId = #{userId}
+        	AND userPassword = #{userPassword}
+    </select>
+	
+</mapper>

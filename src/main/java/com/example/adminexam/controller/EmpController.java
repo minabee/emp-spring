@@ -23,6 +23,7 @@ import com.example.adminexam.service.DeptService;
 import com.example.adminexam.service.EmpService;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 /*
  * @Controller vs @RestController 차이
  * @RestController : JSON/XML 응답을 반환
@@ -45,15 +46,26 @@ public class EmpController {
      * */
     @GetMapping("/emp")
     public String loadEmpPage(ModelMap model, HttpServletRequest request) throws Exception{
-    	logger.debug("[ Call /emp - GET ]");
     	
+    	logger.debug("[ Call /emp - GET ]");
+    	HttpSession session = request.getSession(); //세션 불러오기
+    	String userName = String.valueOf(session.getAttribute("username")); // session 속 username 속성값 반환
+    	if(userName.equals("null")) {
+    		System.out.println("userName : "+ userName);
+    		return "redirect:/login"; //세션에 값이 없다면 로그인페이지로 다시 redirect함.
+    	}
     	//전체 사원 목록 조회
     	List<Map<String,Object>> list = empService.getEmpAll(); //서비스에서 데이터 가져옴
     	//사원 목록을 모델에 추가
     	model.addAttribute("empList",list); //"emp/emp" 경로에 데이터 전달
     	model.addAttribute("size",list.size()); 
+
+    	Map<String, Object> stats = empService.getStats();
     	
-    	//부서 목록 조회
+  	    model.addAttribute("empCnt", stats.get("empCnt"));
+  	    model.addAttribute("avgSal", stats.get("avgSal"));
+  	    model.addAttribute("deptCnt", stats.get("deptCnt"));
+  	    model.addAttribute("totalComm", stats.get("totalComm"));
     	List<Map<String, Object>> deptList = deptService.getDeptAll();
         model.addAttribute("deptList", deptList);
     	
@@ -115,14 +127,13 @@ public class EmpController {
   	}
   	
   	//통계
-  	@GetMapping("/emp/stats") 
-  	public String getStats(ModelMap model){
-  		Map<String, Object> stats = empService.getStats();
-  	    model.addAttribute("empCnt", stats.get("empCnt"));
-  	    model.addAttribute("avgSal", stats.get("avgSal"));
-  	    model.addAttribute("deptCnt", stats.get("deptCnt"));
-  	    model.addAttribute("totalComm", stats.get("totalComm"));
-  	    return "stats";
-  	}
+	/*
+	 * @GetMapping("/emp/stats") public String getStats(ModelMap model){ Map<String,
+	 * Object> stats = empService.getStats(); model.addAttribute("empCnt",
+	 * stats.get("empCnt")); model.addAttribute("avgSal", stats.get("avgSal"));
+	 * model.addAttribute("deptCnt", stats.get("deptCnt"));
+	 * model.addAttribute("totalComm", stats.get("totalComm")); return "stats"; //
+	 * 처음에 이렇게 되어있었는데, 이거는 stats.html에 통계를 전달하겠다. 라는 뜻입니다. 네 이해했슴다 }
+	 */
         
 }

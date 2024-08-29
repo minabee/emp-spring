@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="stylesheet" th:href="@{/css/login.css}" />
+<title>로그인</title>
+</head>
+<body>
+	<div class="container">
+		<h1>로그인</h1>
+		<form class="login-form" th:action="@{/login}" method="post">
+			<div class="txt-field">
+				<input id="userId" type="text" required /> <label>아이디</label>
+			</div>
+			<div class="txt-field">
+				<input id="userPassword" type="password" required /> <label>비밀번호</label>
+			</div>
+			<div class="pass">
+				<label for="login-status">로그인 상태 유지</label> <input type="checkbox"
+					id="login-status" value="stay" />
+			</div>
+			<input class="login-btn" type="butten" value="로그인" onclick="login()"/>
+			<div class="signup-link">
+				회원이 아닌가요? <a href="#">회원가입</a>
+			</div>
+		</form>
+	</div>
+	<script src="https://code.jquery.com/jquery-3.6.0.min.js"
+		integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
+		crossorigin="anonymous"></script>
+	<script>
+     $('#login-status').on('click',function (){
+       var isChecked = $('#login-status').is(':checked');//checked 여부 확인
+       if(isChecked){
+        confirm('해당 브라우저에 로그인 정보를 저장하시겠습니까?');
+       }
+     });
+     
+     //로그인 클릭
+     function login(){
+    	 
+    	 var userId = $('#userId').val();
+    	 var userPassword = $('#userPassword').val();
+    	 
+    	 
+    	 var loginData = {
+    			userId: userId,
+    			userPassword: userPassword
+    	};
+
+    	 $.ajax({
+ 	        type: 'POST',
+ 	        contentType: "application/json",
+ 	        url: '/login',
+ 	        data: JSON.stringify(loginData), 
+ 	        dataType: 'json',
+ 	        success: function(response){
+				console.log(response);
+				if(response != null){
+					location.href = '/login-re';
+				}
+ 	        },
+ 			error:function(xhr,status,error){
+ 				console.log('Error: ' + error);
+ 			}
+ 	    });
+     }
+     
+   </script>
+</body>
+</html>
