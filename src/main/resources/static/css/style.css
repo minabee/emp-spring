@@ -437,3 +437,21 @@ body{
     padding: 0.5rem 0.75rem;
     border-radius: 5px;
 }
+
+/* 검색 */
+.search-box {
+    padding: 0 0 15px;
+}
+.search-box input{
+    height: 24px;
+    margin-right: 5px;
+}
+.search-box button{
+    background-color: var(--blue);
+    border: none;
+    width: 50px;
+    height: 30px;
+    border-radius: 6px;
+    color: #fff;
+    cursor: pointer;
+}

@@ -187,6 +187,72 @@ function clickRow(empno){
     });
 }
 
+//사원이름 검색
+    function searchEmp(){
+        let ename = $('#searchName').val();
+        $.ajax({
+            type: 'GET',
+            url: `/emp/search?ename=${ename}`,
+            dataType: 'json',
+            success: function(data){
+				let empData = $('#empData');
+	            empData.empty();
+				
+				if (data.length === 0) {
+	                empData.append('<tr><td colspan="7">데이터가 없습니다.</td></tr>');
+	            } else {
+	                data.forEach(function(emp) {
+	                    let row = `<tr onclick="clickRow(${emp.empno})">
+	                        <td>${emp.empno}</td>
+	                        <td>${emp.ename}</td>
+	                        <td>${emp.job}</td>
+	                        <td>${emp.sal}</td>
+	                        <td>${emp.hiredate}</td>
+	                        <td>${emp.dname}</td>
+	                        <td>${emp.comm}</td>
+	                    </tr>`;
+	                    empData.append(row);
+	                });
+	            }
+            },
+            error: function(xhr, status, error){
+                console.log("Error: " + error);
+            }
+        });
+    }
+	
+//부서이름 검색
+    function searchDept(){
+        let dname = $('#searchDeptName').val()
+        $.ajax({
+            type: 'GET',
+            url: `/dept/search?dname=${dname}`,
+            dataType: 'json',
+            success: function(data){
+				let deptData = $('#deptData');
+	            deptData.empty();
+				
+				if (data.length === 0) {
+	                deptData.append('<tr><td colspan="4">데이터가 없습니다.</td></tr>');
+	            } else {
+	                data.forEach(function(dept) {
+	                    let row = `<tr onclick="clickDept(${dept.deptno})">
+	                        <td>${dept.deptno}</td>
+	                        <td>${dept.dname}</td>
+	                        <td>${dept.loc}</td>
+	                        <td>${dept.empcnt}</td>
+	                    </tr>`;
+	                    deptData.append(row);
+	                });
+	            }
+            },
+            error: function(xhr,status,error){
+                console.log('error : '+error);
+            }
+        });
+    }
+
+
 //부서 등록
    function addDept(){
 
@@ -312,3 +378,19 @@ function clickRow(empno){
            }
        });
    }
+   
+   // 로그아웃 클릭
+       $('#logout').on('click', function (event) {
+           event.preventDefault(); // 기본 동작을 막음
+           
+           $.ajax({
+               type: 'POST',
+               url: '/logout',
+               success: function(response) {
+                   location.href = '/login'; // 로그아웃 후 로그인 페이지로 리다이렉트
+               },
+               error: function(xhr, status, error) {
+                   console.log('Error: ' + error);
+               }
+           });
+       });

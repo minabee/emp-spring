@@ -5,7 +5,7 @@ import org.springframework.stereotype.Service;
 
 import com.example.adminexam.dto.UsersDTO;
 import com.example.adminexam.mapper.UsersMapper;
-//항상 1%가 부족하구만
+
 @Service
 public class UsersService {
 	

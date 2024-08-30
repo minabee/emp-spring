@@ -82,7 +82,7 @@
                     </a>
                 </li>
                 <li>
-                    <a href="#">
+                    <a href="#" id="logout">
                         <span class="icon"><ion-icon name="log-out-outline"></ion-icon></span>
                         <span class="title">Sign Out</span>                
                     </a>
@@ -98,6 +98,10 @@
                  <div class="cardHeader">
                      <h2>부서 목록</h2>
                      <a href="#" id="deptAdd" class="btn">부서 추가</a>
+                 </div>
+                 <div class="search-box">
+                    <input type="text" id="searchDeptName" placeholder="부서이름을 검색하세요.">
+                    <button onclick="searchDept()">검색</button>
                  </div>
                  <table>
                      <thead>
@@ -161,6 +165,8 @@
     function getBoard(){
         $('.update-popup').css('display', 'block');
     }
+    
+ 
 </script>
 <script type="text/javascript" th:src="@{/js/script.js}"></script>  
 </html>

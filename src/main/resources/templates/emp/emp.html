@@ -36,7 +36,7 @@
                     <label for="i_dname">부서 : </label>
                     <select id="i_dname" name="deptno" required>
                     	<option value="">부서 선택</option>
-                    	<option th:each="dept : ${deptList}" th:value="${dept.deptno}" th:text="${dept.dname}"></option>
+                    	<!-- <option th:each="dept : ${deptList}" th:value="${dept.deptno}" th:text="${dept.dname}"></option> -->
                     </select>
                 </div>
                 <div class="input-box">
@@ -79,7 +79,7 @@
                     <label for="u_dname">부서 : </label>
                     <select id="u_dname" name="deptno" required>
                     	<option value="">부서 선택</option>
-                    	<option th:each="dept : ${deptList}" th:value="${dept.deptno}" th:text="${dept.dname}">
+                    	<!-- <option th:each="dept : ${deptList}" th:value="${dept.deptno}" th:text="${dept.dname}"> -->
                     	</option>
                     </select>
                 </div>
@@ -121,7 +121,7 @@
                     </a>
                 </li>
                 <li>
-                    <a href="#">
+                    <a href="#" id="logout">
                         <span class="icon"><ion-icon name="log-out-outline"></ion-icon></span>
                         <span class="title">Sign Out</span>                
                     </a>
@@ -178,6 +178,10 @@
                      <!-- <a href="#" class="btn" style="background-color: #19ce60;" onclick="downloadExcelFile()">엑셀 다운로드</a> -->
                      <a href="#" id="empAdd" class="btn">사원 추가</a>
                  </div>
+                 <div class="search-box">
+                    <input type="text" id="searchName" placeholder="사원이름을 검색하세요.">
+                    <button onclick="searchEmp()">검색</button>
+                 </div>
                  <table>
                      <thead>
                          <tr>
@@ -193,7 +197,7 @@
                      <tbody id="empData">
                      	<!-- th:if : 타임리프 문법 -->
                      	<tr th:if="${size} == '0'">
-							<td colspan=6>데이터가 없습니다.</td>
+							<td colspan=7>데이터가 없습니다.</td>
 						</tr>
                         <tr th:onclick="clickRow([[${emp.empno}]])" th:unless="${size} == '0'" th:each="emp : ${empList}">
                             <td th:text="${emp.empno}"></td>
@@ -245,5 +249,27 @@
     list.forEach((item) => {item.addEventListener('mouseover',activeLink)});
 
 </script>
-<script type="text/javascript" th:src="@{/js/script.js}"></script>  	
+<script type="text/javascript" th:src="@{/js/script.js}"></script>
+<script type="text/javascript">
+	getDeptAllInfo();
+	function getDeptAllInfo() {
+		$.ajax({
+	           type: 'GET',
+	           url: '/dept-all',
+	           dataType: 'json',
+	           success: function(data){
+	            	for(var i=0; i<data.length; i++){
+	            		/** value에 부서번호를 넣어야함. */
+	            		var option = "<option value="+data[i].deptno+">"+data[i].dname+"</option>";
+		            	$('#u_dname').append(option);
+		            	$('#i_dname').append(option);
+	            	}
+	           },
+	           error : function(xhr,status,error){
+	               console.log('error'+error);
+	           }
+	       });
+	}
+
+</script>
 </html>

@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.example.adminexam.dto.DeptDTO;
@@ -31,7 +32,7 @@ public class DeptController {
     @Autowired
     private DeptService deptService;
 
-    //부서 조회
+    //부서 페이지 이동
     @GetMapping("/dept")
     public String loadMyinfo(ModelMap model, HttpServletRequest request) throws Exception{
 		
@@ -42,6 +43,15 @@ public class DeptController {
     	
         return VIEW_PREFIX+"dept.html";
     }
+    
+   //부서 전체 조회
+    @GetMapping("/dept-all")
+    @ResponseBody
+    public List<Map<String,Object>> callAllDept(){
+    	logger.debug("[ Call /dept-all - GET ]");
+    	return deptService.getDeptAll();
+    }
+    
     
     //부서 저장
     @PostMapping("/dept")
@@ -88,5 +98,16 @@ public class DeptController {
 	public String delDept(@PathVariable("deptno") int deptno) {
   		logger.debug("[ Call /deptno/ - DELETE ]");
 		return deptService.delDept(deptno);
+  	}
+  	
+  //부서명으로 검색
+  	@GetMapping("/dept/search")
+  	@ResponseBody
+  	public List<DeptDTO> searchDept(@RequestParam("dname") String dname){
+  		logger.debug("[ Call /dept/search - GET ]");
+  		
+  		List<DeptDTO> deptList = deptService.searchDept(dname);
+  		
+  		return deptList;
   	}
 }

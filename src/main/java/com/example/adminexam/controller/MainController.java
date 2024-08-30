@@ -41,4 +41,13 @@ public class MainController {
 	public String callLogin(){
 		return "redirect:/emp"; // /emp controller 요청
 	}
+	
+	// 로그아웃 처리
+	@PostMapping("/logout")
+	@ResponseBody
+	public String logout(HttpServletRequest request) {
+		HttpSession session = request.getSession();
+		session.invalidate(); // 세션 무효화
+		return "redirect:/login"; // 로그인 페이지로 리다이렉트
+	}
 }

@@ -45,30 +45,24 @@ public class EmpController {
     /** 사원페이지 조회(페이지 호출)
      * */
     @GetMapping("/emp")
-    public String loadEmpPage(ModelMap model, HttpServletRequest request) throws Exception{
+    public String loadEmpPage(ModelMap model) throws Exception{
     	
     	logger.debug("[ Call /emp - GET ]");
-    	HttpSession session = request.getSession(); //세션 불러오기
-    	String userName = String.valueOf(session.getAttribute("username")); // session 속 username 속성값 반환
-    	if(userName.equals("null")) {
-    		System.out.println("userName : "+ userName);
-    		return "redirect:/login"; //세션에 값이 없다면 로그인페이지로 다시 redirect함.
-    	}
+    	
     	//전체 사원 목록 조회
     	List<Map<String,Object>> list = empService.getEmpAll(); //서비스에서 데이터 가져옴
     	//사원 목록을 모델에 추가
     	model.addAttribute("empList",list); //"emp/emp" 경로에 데이터 전달
     	model.addAttribute("size",list.size()); 
-
+    	
+    	//통계 
     	Map<String, Object> stats = empService.getStats();
     	
   	    model.addAttribute("empCnt", stats.get("empCnt"));
   	    model.addAttribute("avgSal", stats.get("avgSal"));
   	    model.addAttribute("deptCnt", stats.get("deptCnt"));
   	    model.addAttribute("totalComm", stats.get("totalComm"));
-    	List<Map<String, Object>> deptList = deptService.getDeptAll();
-        model.addAttribute("deptList", deptList);
-    	
+		
         return VIEW_PREFIX+"emp.html";
     }
     
@@ -78,13 +72,7 @@ public class EmpController {
     public Map<String, Object> setEmp(@RequestBody Map<String, Object> params) {
     	logger.debug("[ Call /emp - POST ]");
     	
-    	//서비스 호출 및 메시지 반환
-    	String msg = empService.setEmp(params);
-    	
-    	Map<String, Object> response = new HashMap<>();
-	    response.put("msg", msg);
-    	
-    	return response;
+    	return empService.setEmp(params);
     }
     
     //사원 업데이트
@@ -94,13 +82,7 @@ public class EmpController {
     	logger.debug("[ Call /emp - PATCH ]");
     	params.put("empno", empno);
     	
-    	//서비스 호출 및 메시지 반환
-    	String msg = empService.updateEmp(params);
-    	
-    	Map<String, Object> response = new HashMap<>();
-	    response.put("msg", msg);
-    	
-    	return response;
+    	return empService.updateEmp(params);
     }
     
     //해당 사원 조회
@@ -122,18 +104,14 @@ public class EmpController {
   	//사원 이름으로 사원 조회
   	@GetMapping("/emp/search")
   	@ResponseBody
-  	public List<EmpDTO> searchEmpByName(@RequestParam String ename){ 
-  		return empService.searchEmpByName(ename);
+  	public List<EmpDTO> searchEmpByName(@RequestParam("ename") String ename){
+  		logger.debug("[ Call /emp/search - GET ]");
+  		
+  		List<EmpDTO> empList = empService.searchEmpByName(ename);
+  	    
+  		return empList;
   	}
   	
-  	//통계
-	/*
-	 * @GetMapping("/emp/stats") public String getStats(ModelMap model){ Map<String,
-	 * Object> stats = empService.getStats(); model.addAttribute("empCnt",
-	 * stats.get("empCnt")); model.addAttribute("avgSal", stats.get("avgSal"));
-	 * model.addAttribute("deptCnt", stats.get("deptCnt"));
-	 * model.addAttribute("totalComm", stats.get("totalComm")); return "stats"; //
-	 * 처음에 이렇게 되어있었는데, 이거는 stats.html에 통계를 전달하겠다. 라는 뜻입니다. 네 이해했슴다 }
-	 */
+
         
 }
